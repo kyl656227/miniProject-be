@@ -1,0 +1,269 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --sidebar-width: 340px;
+    --bg-dark: #1a1a2e;
+    --bg-card: #16213e;
+    --bg-hover: #0f3460;
+    --text-primary: #e8d5b0;
+    --text-secondary: #a89880;
+    --border: rgba(232, 213, 176, 0.15);
+    --accent: #e8d5b0;
+}
+
+html, body {
+    height: 100%;
+    font-family: 'Malgun Gothic', '맑은 고딕', -apple-system, sans-serif;
+}
+
+#app {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* ── 사이드바 ── */
+#sidebar {
+    width: var(--sidebar-width);
+    min-width: var(--sidebar-width);
+    background: var(--bg-dark);
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    z-index: 10;
+}
+
+.sidebar-header {
+    padding: 28px 24px 20px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(135deg, #1a1a2e 0%, #0d1b4b 100%);
+}
+
+.title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: 0.05em;
+}
+
+.subtitle {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-top: 4px;
+    letter-spacing: 0.1em;
+}
+
+/* ── 궁궐 버튼 목록 ── */
+.palace-nav {
+    padding: 16px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    border-bottom: 1px solid var(--border);
+}
+
+.palace-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    cursor: pointer;
+    color: var(--text-primary);
+    transition: background 0.2s, border-color 0.2s;
+    text-align: left;
+    width: 100%;
+}
+
+.palace-btn:hover {
+    background: var(--bg-hover);
+    border-color: var(--border);
+}
+
+.palace-btn.active {
+    background: var(--bg-card);
+    border-color: var(--palace-color, #e8d5b0);
+    box-shadow: 0 0 0 1px var(--palace-color, #e8d5b0) inset;
+}
+
+.palace-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.palace-btn-name {
+    font-size: 1rem;
+    font-weight: 600;
+    flex: 1;
+}
+
+.palace-btn-en {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+}
+
+/* ── 정보 패널 ── */
+.info-panel {
+    flex: 1;
+    padding: 16px 16px 12px;
+    overflow-y: auto;
+}
+
+.info-panel.hidden {
+    display: none;
+}
+
+.info-header {
+    margin-bottom: 14px;
+}
+
+.info-header h2 {
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.info-address {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.info-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.info-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.info-card:hover {
+    border-color: var(--accent);
+}
+
+.info-card img {
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+    display: block;
+}
+
+.info-card-body {
+    padding: 10px 12px;
+}
+
+.info-card-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.info-card-desc {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* ── 로딩 ── */
+.loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 24px;
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+}
+
+.loading.hidden {
+    display: none;
+}
+
+.spinner {
+    width: 28px;
+    height: 28px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ── 푸터 ── */
+.sidebar-footer {
+    padding: 12px 16px;
+    border-top: 1px solid var(--border);
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    margin-top: auto;
+}
+
+.sidebar-footer a {
+    color: var(--text-primary);
+    text-decoration: none;
+}
+
+.sidebar-footer a:hover {
+    text-decoration: underline;
+}
+
+/* ── 지도 ── */
+#map {
+    flex: 1;
+    height: 100%;
+}
+
+/* ── 커스텀 마커 ── */
+.custom-marker {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+}
+
+.marker-pin {
+    width: 36px;
+    height: 36px;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    border: 2px solid rgba(255,255,255,0.3);
+}
+
+.marker-label {
+    margin-top: 4px;
+    background: rgba(26,26,46,0.85);
+    color: #e8d5b0;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 4px;
+    white-space: nowrap;
+    backdrop-filter: blur(4px);
+}

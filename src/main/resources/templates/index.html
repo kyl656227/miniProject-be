@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>서울 궁궐 지도</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div id="app">
+    <!-- 사이드바 -->
+    <aside id="sidebar">
+        <div class="sidebar-header">
+            <h1 class="title">서울 궁궐 지도</h1>
+            <p class="subtitle">Seoul Palace Map</p>
+        </div>
+
+        <nav class="palace-nav">
+            <button th:each="palace : ${palaces}"
+                    th:id="'btn-' + ${palace.id}"
+                    th:data-id="${palace.id}"
+                    th:style="'--palace-color:' + ${palace.color}"
+                    class="palace-btn"
+                    th:onclick="'selectPalace(' + ${palace.id} + ')'">
+                <span class="palace-dot" th:style="'background:' + ${palace.color}"></span>
+                <span class="palace-btn-name" th:text="${palace.name}"></span>
+                <span class="palace-btn-en" th:text="${palace.nameEn}"></span>
+            </button>
+        </nav>
+
+        <div id="info-panel" class="info-panel hidden">
+            <div class="info-header">
+                <h2 id="info-title"></h2>
+                <span id="info-address" class="info-address"></span>
+            </div>
+            <div id="info-list" class="info-list"></div>
+        </div>
+
+        <div id="loading" class="loading hidden">
+            <div class="spinner"></div>
+            <span>정보를 불러오는 중...</span>
+        </div>
+
+        <div class="sidebar-footer">
+            <p>자료 출처: <a href="https://www.heritage.go.kr" target="_blank">국가문화유산포털</a></p>
+        </div>
+    </aside>
+
+    <!-- 지도 -->
+    <main id="map"></main>
+</div>
+
+<!-- Thymeleaf → JavaScript 데이터 주입 -->
+<script th:inline="javascript">
+    const PALACES = /*[[${palaces}]]*/ [];
+    const KAKAO_KEY = /*[[${kakaoKey}]]*/ '';
+</script>
+
+<!-- 카카오맵 SDK (동적으로 키 삽입) -->
+<script th:inline="javascript">
+    (function () {
+        const script = document.createElement('script');
+        script.src = 'https://dapi.kakao.com/v2/maps/sdk.js?appkey=' + KAKAO_KEY + '&autoload=false';
+        script.onload = function () {
+            kakao.maps.load(function () {
+                initMap();
+            });
+        };
+        document.head.appendChild(script);
+    })();
+</script>
+
+<script th:src="@{/js/map.js}"></script>
+</body>
+</html>
