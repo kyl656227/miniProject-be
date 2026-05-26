@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>서울 궁궐 지도</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/moonspam/NanumSquare@2.0/nanumSquare.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div id="app">
+    <aside id="sidebar">
+        <div class="sidebar-header">
+            <h1 class="title">서울 궁궐 지도</h1>
+            <p class="subtitle">Seoul Palace Map</p>
+        </div>
+
+        <div class="section-header">
+            <span class="section-title">궁궐</span>
+        </div>
+        <nav class="palace-nav" id="palace-nav">
+            <button th:each="palace : ${palaces}"
+                    th:id="'btn-' + ${palace.id}"
+                    th:data-id="${palace.id}"
+                    class="palace-btn"
+                    th:onclick="'selectPalace(' + ${palace.id} + ')'">
+                <span class="palace-dot" th:style="'background:' + ${palace.color}"></span>
+                <span class="palace-btn-name" th:text="${palace.name}"></span>
+                <span class="palace-btn-en" th:text="${palace.nameEn}"></span>
+            </button>
+        </nav>
+
+        <div class="section-header">
+            <span class="section-title">박물관</span>
+        </div>
+        <nav class="palace-nav" id="museum-nav"></nav>
+
+        <div id="info-panel" class="info-panel hidden">
+            <div class="info-header">
+                <h2 id="info-title"></h2>
+                <span id="info-address" class="info-address"></span>
+            </div>
+            <div id="info-list" class="info-list"></div>
+        </div>
+
+        <div id="loading" class="loading hidden">
+            <div class="spinner"></div>
+            <span>정보를 불러오는 중...</span>
+        </div>
+
+        <div class="sidebar-footer">
+            <p>자료 출처: <a href="https://www.heritage.go.kr" target="_blank">국가문화유산포털</a></p>
+        </div>
+    </aside>
+
+    <div id="map-area">
+        <div id="map"></div>
+
+        <!-- 퀴즈 패널 -->
+        <div id="quiz-panel" class="quiz-panel">
+            <div class="detail-nav">
+                <button class="detail-back-btn" id="quiz-back">
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+                        <path d="M11 3L5 9L11 15" stroke="currentColor" stroke-width="2"
+                              stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    돌아가기
+                </button>
+                <span id="quiz-palace-name" class="detail-palace-name"></span>
+            </div>
+
+            <div id="quiz-hero" class="quiz-hero"></div>
+
+            <div class="quiz-card">
+                <div class="quiz-badge">문화유산 퀴즈</div>
+                <p class="quiz-question">이 문화유산의 이름은 무엇일까요?</p>
+                <div class="quiz-hint-box">
+                    <p id="quiz-hint" class="quiz-hint"></p>
+                </div>
+            </div>
+
+            <div id="quiz-choices" class="quiz-choices"></div>
+            <div id="quiz-result" class="quiz-result hidden"></div>
+            <div id="quiz-actions" class="quiz-actions hidden"></div>
+        </div>
+
+        <!-- 상세 페이지 패널 -->
+        <div id="detail-panel" class="detail-panel">
+            <div class="detail-nav">
+                <button class="detail-back-btn" id="detail-back">
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+                        <path d="M11 3L5 9L11 15" stroke="currentColor" stroke-width="2"
+                              stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    돌아가기
+                </button>
+                <span id="detail-palace-name" class="detail-palace-name"></span>
+            </div>
+
+            <div id="detail-hero" class="detail-hero"></div>
+
+            <div class="detail-body">
+                <p id="detail-category" class="detail-category"></p>
+                <h1 id="detail-title" class="detail-title"></h1>
+                <p id="detail-desc" class="detail-desc"></p>
+                <div id="detail-actions" class="detail-actions"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    const PALACES = /*[[${palaces}]]*/ [];
+    const KAKAO_KEY = /*[[${kakaoKey}]]*/ '';
+</script>
+
+<script th:inline="javascript">
+    (function () {
+        const script = document.createElement('script');
+        script.src = 'https://dapi.kakao.com/v2/maps/sdk.js?appkey=' + KAKAO_KEY + '&autoload=false';
+        script.onload = function () { kakao.maps.load(initMap); };
+        script.onerror = function () { alert('카카오맵 로드 실패 — API 키를 확인해 주세요.'); };
+        document.head.appendChild(script);
+    })();
+</script>
+
+<script th:src="@{/js/map.js}"></script>
+</body>
+</html>
