@@ -111,7 +111,12 @@ let currentLang      = 'ko';
 let quizScore        = { correct: 0, total: 0 };
 
 /* ── 모바일 사이드바 ── */
+function isMobile() {
+    return window.innerWidth <= 768;
+}
+
 function openMobileSidebar() {
+    if (!isMobile()) return;   // 데스크톱에선 아무것도 하지 않음
     document.getElementById('sidebar').classList.add('mobile-open');
     document.getElementById('sidebar-backdrop').classList.add('visible');
     const btn = document.getElementById('mobile-sidebar-toggle');
