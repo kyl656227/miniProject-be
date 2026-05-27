@@ -861,8 +861,6 @@ html, body {
     z-index: 99;
 }
 
-#sidebar-backdrop.visible { display: block; }
-
 /* ══════════════════════════════
    모바일 반응형 (≤ 768px)
 ══════════════════════════════ */
@@ -940,4 +938,7 @@ html, body {
         position: fixed;
         z-index: 200;
     }
+
+    /* 모바일에서만 backdrop 표시 */
+    #sidebar-backdrop.visible { display: block; }
 }
