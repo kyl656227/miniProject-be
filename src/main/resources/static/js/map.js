@@ -305,6 +305,15 @@ function selectCourse(course) {
     openMobileSidebar();
 }
 
+/* ── 정보 패널로 부드럽게 스크롤 ── */
+function scrollToInfoPanel() {
+    const sidebar = document.getElementById('sidebar');
+    const panel   = document.getElementById('info-panel');
+    if (!sidebar || !panel) return;
+    const offset = panel.offsetTop - 12;
+    sidebar.scrollTo({ top: offset, behavior: 'smooth' });
+}
+
 /* ── 지하철 정보 표시 ── */
 function showSubwayInfo(id) {
     const el = document.getElementById('subway-info');
@@ -499,6 +508,7 @@ function loadPalaceInfo(palace) {
         .then(items => {
             loading.classList.add('hidden');
             panel.classList.remove('hidden');
+            scrollToInfoPanel();
             if (!items || items.length === 0) throw new Error('empty');
             currentItems = items;
             items.forEach(item => list.appendChild(buildCard(item, palace)));
@@ -506,6 +516,7 @@ function loadPalaceInfo(palace) {
         .catch(() => {
             loading.classList.add('hidden');
             panel.classList.remove('hidden');
+            scrollToInfoPanel();
             const fallback = PALACE_DATA[palace.id] ?? [];
             currentItems = fallback;
             if (fallback.length === 0) {
@@ -531,6 +542,7 @@ function loadMuseumInfo(museum) {
 
     loading.classList.add('hidden');
     panel.classList.remove('hidden');
+    scrollToInfoPanel();
 
     const entry = MUSEUM_DATA[museum.id];
     currentItems = [];
