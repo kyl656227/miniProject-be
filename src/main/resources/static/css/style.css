@@ -547,7 +547,11 @@ html, body {
     pointer-events: none;
 }
 
-.custom-marker:hover .marker-tooltip { display: block; }
+.custom-marker:hover .marker-tooltip {
+    display: block;
+    pointer-events: auto;
+    cursor: pointer;
+}
 
 .marker-tooltip-img {
     width: 100%;
