@@ -8,7 +8,7 @@
 | | URL |
 |---|---|
 | GitHub Pages (정적 배포) | https://kyl656227.github.io/seoul-palace-map/ |
-| Spring Boot 로컬 | `mvn spring-boot:run` → http://localhost:8080 |
+
 
 ---
 
