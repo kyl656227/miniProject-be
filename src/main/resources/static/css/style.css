@@ -411,3 +411,380 @@ html, body {
 
 .detail-cta:hover  { background: var(--primary-focus); }
 .detail-cta:active { transform: scale(0.97); }
+
+/* ── 섹션 헤더 ── */
+.section-header {
+    padding: 14px 18px 6px;
+}
+
+.section-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--ink-muted-48);
+}
+
+/* ── 박물관 닷 ── */
+.museum-dot {
+    width: 10px;
+    height: 10px;
+    transform: rotate(45deg);
+    flex-shrink: 0;
+}
+
+/* ── 커스텀 마커 글로우 닷 ── */
+.marker-dot {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--dot-color, #333);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2.5px solid white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.marker-dot-inner {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.7);
+}
+
+.marker-dot-pulse {
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    background: var(--dot-color, #333);
+    opacity: 0.25;
+    animation: pulse 2s ease-out infinite;
+}
+
+.marker-diamond-wrap {
+    width: 18px;
+    height: 18px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.marker-diamond {
+    width: 14px;
+    height: 14px;
+    background: var(--dot-color, #555);
+    transform: rotate(45deg);
+    border: 2px solid white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.marker-diamond-pulse {
+    position: absolute;
+    inset: -6px;
+    background: var(--dot-color, #555);
+    opacity: 0.2;
+    transform: rotate(45deg);
+    animation: pulse 2s ease-out infinite;
+}
+
+@keyframes pulse {
+    0%   { transform: scale(1);   opacity: 0.25; }
+    70%  { transform: scale(1.8); opacity: 0;    }
+    100% { transform: scale(1.8); opacity: 0;    }
+}
+
+.marker-tooltip {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.18);
+    overflow: hidden;
+    width: 120px;
+    pointer-events: none;
+}
+
+.custom-marker:hover .marker-tooltip { display: block; }
+
+.marker-tooltip-img {
+    width: 100%;
+    height: 70px;
+    object-fit: cover;
+    display: block;
+}
+
+.marker-tooltip-emoji {
+    width: 100%;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    background: var(--canvas-parchment);
+}
+
+.marker-tooltip-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 8px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--ink);
+    font-family: 'NanumSquare', system-ui, sans-serif;
+}
+
+.marker-tooltip-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/* ── 퀴즈 패널 ── */
+.quiz-panel {
+    position: absolute;
+    inset: 0;
+    background: var(--canvas);
+    transform: translateX(100%);
+    transition: transform 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 50;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.quiz-panel.open { transform: translateX(0); }
+
+.quiz-hero {
+    width: 100%;
+    background: var(--canvas-parchment);
+    flex-shrink: 0;
+    min-height: 60px;
+}
+
+.quiz-hero img {
+    width: 100%;
+    max-height: 220px;
+    object-fit: cover;
+    display: block;
+}
+
+.quiz-hero-empty { height: 60px; }
+
+.quiz-card {
+    padding: 24px 24px 16px;
+    border-bottom: 1px solid var(--hairline);
+}
+
+.quiz-badge {
+    display: inline-block;
+    background: var(--canvas-parchment);
+    color: var(--primary);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: var(--r-pill);
+    margin-bottom: 12px;
+    border: 1px solid var(--hairline);
+}
+
+.quiz-question {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--ink);
+    line-height: 1.3;
+    margin-bottom: 14px;
+    letter-spacing: -0.3px;
+}
+
+.quiz-hint-box {
+    background: var(--canvas-parchment);
+    border-radius: var(--r-sm);
+    padding: 12px 14px;
+    border: 1px solid var(--hairline);
+}
+
+.quiz-hint {
+    font-size: 13px;
+    color: var(--ink-muted-80);
+    line-height: 1.6;
+}
+
+.quiz-choices {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.quiz-choice {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: var(--canvas);
+    border: 1.5px solid var(--hairline);
+    border-radius: var(--r-lg);
+    cursor: pointer;
+    font-family: inherit;
+    text-align: left;
+    transition: border-color 0.15s, background 0.15s;
+    width: 100%;
+}
+
+.quiz-choice:hover:not(:disabled) {
+    border-color: var(--primary);
+    background: #f0f6ff;
+}
+
+.quiz-choice.correct { border-color: #16a34a; background: #f0fdf4; }
+.quiz-choice.wrong   { border-color: #dc2626; background: #fff5f5; }
+
+.quiz-choice-badge {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--canvas-parchment);
+    border: 1.5px solid var(--hairline);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink-muted-48);
+    flex-shrink: 0;
+}
+
+.quiz-choice-text {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink);
+}
+
+.quiz-result {
+    margin: 0 16px 8px;
+    padding: 20px;
+    border-radius: var(--r-lg);
+    text-align: center;
+}
+
+.quiz-result.hidden { display: none; }
+
+.quiz-result.correct-msg { background: #f0fdf4; border: 1px solid #bbf7d0; }
+.quiz-result.wrong-msg   { background: #fff5f5; border: 1px solid #fecaca; }
+
+.quiz-result-icon  { font-size: 28px; margin-bottom: 8px; }
+
+.quiz-result-title {
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 4px;
+    color: var(--ink);
+}
+
+.quiz-result-sub {
+    font-size: 13px;
+    color: var(--ink-muted-80);
+}
+
+.quiz-actions { padding: 0 16px 32px; display: flex; gap: 10px; }
+.quiz-actions.hidden { display: none; }
+
+/* ── 모바일 전용 요소 (데스크톱에서 숨김) ── */
+.mobile-sidebar-toggle { display: none; }
+.sidebar-handle        { display: none; }
+
+#sidebar-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 99;
+}
+
+#sidebar-backdrop.visible { display: block; }
+
+/* ══════════════════════════════
+   모바일 반응형 (≤ 768px)
+══════════════════════════════ */
+@media (max-width: 768px) {
+
+    /* 사이드바 → 하단 시트 */
+    #sidebar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        min-width: unset;
+        height: 68vh;
+        border-right: none;
+        border-top: 1px solid var(--hairline);
+        border-radius: 20px 20px 0 0;
+        transform: translateY(100%);
+        transition: transform 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 100;
+        box-shadow: 0 -8px 32px rgba(0,0,0,0.18);
+    }
+
+    #sidebar.mobile-open { transform: translateY(0); }
+
+    /* 드래그 핸들 */
+    .sidebar-handle {
+        display: flex;
+        justify-content: center;
+        padding: 12px 0 8px;
+        flex-shrink: 0;
+        cursor: pointer;
+    }
+
+    .sidebar-handle::after {
+        content: '';
+        width: 40px;
+        height: 4px;
+        background: var(--body-muted);
+        border-radius: 2px;
+    }
+
+    /* 지도 위 떠있는 목록 버튼 */
+    .mobile-sidebar-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        bottom: 32px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--ink);
+        color: var(--on-dark);
+        border: none;
+        border-radius: var(--r-pill);
+        padding: 13px 28px;
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        z-index: 20;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.32);
+        white-space: nowrap;
+        transition: opacity 0.15s;
+    }
+
+    .mobile-sidebar-toggle:active { opacity: 0.75; }
+
+    /* 퀴즈·상세 패널 → 전체화면 */
+    .quiz-panel,
+    .detail-panel {
+        position: fixed;
+        z-index: 200;
+    }
+}

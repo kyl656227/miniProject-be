@@ -79,6 +79,21 @@ const FALLBACK_NAMES = [
 
 let map;
 let selectedPalaceId = null;
+
+/* ── 모바일 사이드바 ── */
+function openMobileSidebar() {
+    document.getElementById('sidebar').classList.add('mobile-open');
+    document.getElementById('sidebar-backdrop').classList.add('visible');
+    const btn = document.getElementById('mobile-sidebar-toggle');
+    if (btn) btn.textContent = '닫기';
+}
+
+function closeMobileSidebar() {
+    document.getElementById('sidebar').classList.remove('mobile-open');
+    document.getElementById('sidebar-backdrop').classList.remove('visible');
+    const btn = document.getElementById('mobile-sidebar-toggle');
+    if (btn) btn.textContent = '목록 보기';
+}
 let currentPalace    = null;
 let currentItems     = [];
 let quizItem         = null;
@@ -224,6 +239,7 @@ function selectPalace(palaceId) {
     closeQuiz();
     closeDetail();
     loadPalaceInfo(palace);
+    openMobileSidebar();
 }
 
 /* ── 박물관 선택 ── */
@@ -244,6 +260,7 @@ function selectMuseum(museumId) {
     closeQuiz();
     closeDetail();
     loadMuseumInfo(museum);
+    openMobileSidebar();
 }
 
 /* ── 궁궐 정보 불러오기 ── */
@@ -521,4 +538,23 @@ function closeDetail() {
 window.addEventListener('DOMContentLoaded', () => {
     document.getElementById('quiz-back').addEventListener('click', closeQuiz);
     document.getElementById('detail-back').addEventListener('click', closeDetail);
+
+    /* 모바일 사이드바 토글 */
+    const toggleBtn = document.getElementById('mobile-sidebar-toggle');
+    const backdrop  = document.getElementById('sidebar-backdrop');
+    const handle    = document.querySelector('.sidebar-handle');
+    const sidebar   = document.getElementById('sidebar');
+
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', () => {
+            if (sidebar.classList.contains('mobile-open')) {
+                closeMobileSidebar();
+            } else {
+                openMobileSidebar();
+            }
+        });
+    }
+
+    if (backdrop) backdrop.addEventListener('click', closeMobileSidebar);
+    if (handle)   handle.addEventListener('click', closeMobileSidebar);
 });
