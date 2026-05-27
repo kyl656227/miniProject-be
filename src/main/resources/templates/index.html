@@ -18,10 +18,11 @@
         <div class="sidebar-header">
             <h1 class="title">서울 궁궐 지도</h1>
             <p class="subtitle">Seoul Palace Map</p>
+            <button id="lang-toggle" class="lang-toggle">EN</button>
         </div>
 
         <div class="section-header">
-            <span class="section-title">궁궐</span>
+            <span class="section-title" id="section-title-palace">궁궐</span>
         </div>
         <nav class="palace-nav" id="palace-nav">
             <button th:each="palace : ${palaces}"
@@ -36,14 +37,20 @@
         </nav>
 
         <div class="section-header">
-            <span class="section-title">박물관</span>
+            <span class="section-title" id="section-title-museum">박물관</span>
         </div>
         <nav class="palace-nav" id="museum-nav"></nav>
+
+        <div class="section-header">
+            <span class="section-title" id="section-title-course">추천 코스</span>
+        </div>
+        <div id="course-nav" class="course-nav"></div>
 
         <div id="info-panel" class="info-panel hidden">
             <div class="info-header">
                 <h2 id="info-title"></h2>
                 <span id="info-address" class="info-address"></span>
+                <div id="subway-info" class="subway-info hidden"></div>
             </div>
             <div id="info-list" class="info-list"></div>
         </div>
@@ -74,6 +81,7 @@
                     돌아가기
                 </button>
                 <span id="quiz-palace-name" class="detail-palace-name"></span>
+                <div id="quiz-score-display" class="quiz-score-display"></div>
             </div>
 
             <div id="quiz-hero" class="quiz-hero"></div>

@@ -77,8 +77,38 @@ const FALLBACK_NAMES = [
     '중화전', '석어당', '즉조당', '준명당', '경복궁 아미산',
 ];
 
+/* ── 지하철 정보 데이터 ── */
+const SUBWAY_INFO = {
+    1:  { lines: ['3호선'], stations: ['경복궁역'], stationsEn: ['Gyeongbokgung'], colors: ['#EF7C1C'], walk: '도보 5분', walkEn: '5 min walk' },
+    2:  { lines: ['3호선'], stations: ['안국역'],   stationsEn: ['Anguk'],         colors: ['#EF7C1C'], walk: '도보 10분', walkEn: '10 min walk' },
+    3:  { lines: ['4호선'], stations: ['혜화역'],   stationsEn: ['Hyehwa'],        colors: ['#00A5DE'], walk: '도보 15분', walkEn: '15 min walk' },
+    4:  { lines: ['1·2호선'], stations: ['시청역'], stationsEn: ['City Hall'],     colors: ['#263C96', '#3DBE29'], walk: '도보 5분', walkEn: '5 min walk' },
+    5:  { lines: ['1·3·5호선'], stations: ['종로3가역'], stationsEn: ['Jongno 3-ga'], colors: ['#263C96', '#EF7C1C', '#996CAC'], walk: '도보 5분', walkEn: '5 min walk' },
+    m1: { lines: ['4호선'], stations: ['이촌역'],   stationsEn: ['Ichon'],         colors: ['#00A5DE'], walk: '도보 5분', walkEn: '5 min walk' },
+    m2: { lines: ['3호선'], stations: ['안국역'],   stationsEn: ['Anguk'],         colors: ['#EF7C1C'], walk: '도보 15분', walkEn: '15 min walk' },
+    m3: { lines: ['5호선'], stations: ['서대문역'], stationsEn: ['Seodaemun'],     colors: ['#996CAC'], walk: '도보 5분', walkEn: '5 min walk' },
+    m4: { lines: ['3호선'], stations: ['안국역'],   stationsEn: ['Anguk'],         colors: ['#EF7C1C'], walk: '도보 10분', walkEn: '10 min walk' },
+    m5: { lines: ['4·6호선'], stations: ['삼각지역'], stationsEn: ['Samgakji'],   colors: ['#00A5DE', '#CD7C2F'], walk: '도보 5분', walkEn: '5 min walk' },
+    m6: { lines: ['6호선'], stations: ['한강진역'], stationsEn: ['Hangangjin'],    colors: ['#CD7C2F'], walk: '도보 10분', walkEn: '10 min walk' },
+    m7: { lines: ['1·2호선'], stations: ['시청역'], stationsEn: ['City Hall'],     colors: ['#263C96', '#3DBE29'], walk: '도보 5분', walkEn: '5 min walk' },
+};
+
+/* ── 추천 코스 데이터 ── */
+const COURSES = [
+    { id: 'c1', name: '반나절 코스', nameEn: 'Half-Day',    time: '3~4시간', timeEn: '3-4 hrs', desc: '경복궁과 인근 박물관', descEn: 'Gyeongbokgung & museums',   color: '#6C63FF', places: [1, 'm2', 'm4'] },
+    { id: 'c2', name: '하루 코스',   nameEn: 'Full Day',    time: '6~7시간', timeEn: '6-7 hrs', desc: '북촌 궁궐 & 박물관',   descEn: 'Bukchon palaces & museums', color: '#059669', places: [1, 2, 3, 'm2'] },
+    { id: 'c3', name: '궁궐 완주',   nameEn: 'All Palaces', time: '1박 2일', timeEn: '1-2 days', desc: '서울 5대 궁궐 전부',   descEn: 'All 5 royal palaces',       color: '#C0392B', places: [1, 2, 3, 4, 5] },
+    { id: 'c4', name: '역사 탐방',   nameEn: 'History',     time: '5~6시간', timeEn: '5-6 hrs', desc: '조선 왕조 역사 심층', descEn: 'Deep Joseon history',        color: '#D97706', places: [1, 5, 4, 'm3'] },
+];
+
 let map;
 let selectedPalaceId = null;
+let currentPalace    = null;
+let currentItems     = [];
+let quizItem         = null;
+let quizPalace       = null;
+let currentLang      = 'ko';
+let quizScore        = { correct: 0, total: 0 };
 
 /* ── 모바일 사이드바 ── */
 function openMobileSidebar() {
@@ -94,10 +124,6 @@ function closeMobileSidebar() {
     const btn = document.getElementById('mobile-sidebar-toggle');
     if (btn) btn.textContent = '목록 보기';
 }
-let currentPalace    = null;
-let currentItems     = [];
-let quizItem         = null;
-let quizPalace       = null;
 
 function makeEmojiCursor(emoji) {
     const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'>`
@@ -129,6 +155,7 @@ function initMap() {
     map.addControl(new kakao.maps.MapTypeControl(), kakao.maps.ControlPosition.TOPRIGHT);
 
     buildMuseumSidebar();
+    buildCourseSection();
     prefetchPhotos().then(() => {
         PALACES.forEach(createMarker);
         MUSEUMS.forEach(createMuseumMarker);
@@ -138,17 +165,206 @@ function initMap() {
 /* ── 박물관 사이드바 버튼 생성 ── */
 function buildMuseumSidebar() {
     const nav = document.getElementById('museum-nav');
+    nav.innerHTML = '';
     MUSEUMS.forEach(museum => {
         const btn = document.createElement('button');
         btn.className = 'palace-btn';
         btn.id = 'btn-' + museum.id;
         btn.innerHTML = `
             <span class="museum-dot" style="background:${museum.color}"></span>
-            <span class="palace-btn-name">${museum.name}</span>
-            <span class="palace-btn-en">${museum.nameEn}</span>`;
+            <span class="palace-btn-name">${currentLang === 'ko' ? museum.name : museum.nameEn}</span>
+            <span class="palace-btn-en">${currentLang === 'ko' ? museum.nameEn : museum.name}</span>`;
         btn.addEventListener('click', () => selectMuseum(museum.id));
         nav.appendChild(btn);
     });
+    if (selectedPalaceId !== null) {
+        document.getElementById('btn-' + selectedPalaceId)?.classList.add('active');
+    }
+}
+
+/* ── 궁궐 사이드바 버튼 갱신 (Thymeleaf 렌더 후 언어 갱신용) ── */
+function rebuildPalaceSidebar() {
+    const nav = document.getElementById('palace-nav');
+    nav.innerHTML = '';
+    PALACES.forEach(palace => {
+        const btn = document.createElement('button');
+        btn.className = 'palace-btn';
+        btn.id = 'btn-' + palace.id;
+        btn.innerHTML = `
+            <span class="palace-dot" style="background:${palace.color}"></span>
+            <span class="palace-btn-name">${currentLang === 'ko' ? palace.name : palace.nameEn}</span>
+            <span class="palace-btn-en">${currentLang === 'ko' ? palace.nameEn : palace.name}</span>`;
+        btn.addEventListener('click', () => selectPalace(palace.id));
+        nav.appendChild(btn);
+    });
+    if (selectedPalaceId !== null) {
+        document.getElementById('btn-' + selectedPalaceId)?.classList.add('active');
+    }
+}
+
+/* ── 코스 섹션 빌드 ── */
+function buildCourseSection() {
+    const nav = document.getElementById('course-nav');
+    nav.innerHTML = '';
+    COURSES.forEach(course => {
+        const card = document.createElement('div');
+        card.className = 'course-card';
+
+        const dotColors = course.places.map(pid => {
+            const p = typeof pid === 'number'
+                ? PALACES.find(x => x.id === pid)
+                : MUSEUMS.find(x => x.id === pid);
+            return p ? p.color : '#aaa';
+        });
+
+        const dotsHtml = dotColors.map(c =>
+            `<span class="course-place-dot" style="background:${c}"></span>`
+        ).join('');
+
+        const timeText = currentLang === 'ko' ? course.time   : course.timeEn;
+        const nameText = currentLang === 'ko' ? course.name   : course.nameEn;
+        const descText = currentLang === 'ko' ? course.desc   : course.descEn;
+
+        card.innerHTML = `
+            <div class="course-card-left" style="background:${course.color}">
+                <span class="course-time">${timeText}</span>
+            </div>
+            <div class="course-card-body">
+                <div class="course-card-name">${nameText}</div>
+                <div class="course-card-desc">${descText}</div>
+                <div class="course-places">${dotsHtml}</div>
+            </div>`;
+        card.addEventListener('click', () => selectCourse(course));
+        nav.appendChild(card);
+    });
+}
+
+/* ── 코스 선택 ── */
+function selectCourse(course) {
+    if (!map) return;
+    const firstId = course.places[0];
+    const firstPlace = typeof firstId === 'number'
+        ? PALACES.find(p => p.id === firstId)
+        : MUSEUMS.find(m => m.id === firstId);
+
+    if (firstPlace) {
+        map.setLevel(5);
+        map.panTo(new kakao.maps.LatLng(firstPlace.lat, firstPlace.lng));
+    }
+
+    const panel    = document.getElementById('info-panel');
+    const loading  = document.getElementById('loading');
+    const list     = document.getElementById('info-list');
+    const subwayEl = document.getElementById('subway-info');
+
+    loading.classList.add('hidden');
+    panel.classList.remove('hidden');
+
+    const courseName = currentLang === 'ko' ? course.name : course.nameEn;
+    const courseDesc = currentLang === 'ko' ? course.desc : course.descEn;
+    const courseTime = currentLang === 'ko' ? course.time : course.timeEn;
+
+    document.getElementById('info-title').textContent   = courseName;
+    document.getElementById('info-address').textContent = courseTime + ' · ' + courseDesc;
+
+    if (subwayEl) {
+        subwayEl.classList.add('hidden');
+        subwayEl.innerHTML = '';
+    }
+
+    list.innerHTML = '';
+    course.places.forEach((pid, idx) => {
+        const place = typeof pid === 'number'
+            ? PALACES.find(p => p.id === pid)
+            : MUSEUMS.find(m => m.id === pid);
+        if (!place) return;
+
+        const stopEl = document.createElement('div');
+        stopEl.className = 'info-card';
+        stopEl.style.cursor = 'pointer';
+
+        const placeName = currentLang === 'ko' ? place.name : place.nameEn;
+        const subInfo = SUBWAY_INFO[place.id];
+        const walkText = subInfo ? (currentLang === 'ko' ? subInfo.walk : subInfo.walkEn) : '';
+
+        stopEl.innerHTML = `
+            <div class="info-card-body" style="display:flex;align-items:center;gap:10px;padding:12px 14px">
+                <span style="width:22px;height:22px;border-radius:50%;background:${place.color};color:white;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">${idx + 1}</span>
+                <div style="flex:1">
+                    <div class="info-card-title">${placeName}</div>
+                    ${walkText ? `<div class="info-card-desc">${walkText}</div>` : ''}
+                </div>
+            </div>`;
+        stopEl.addEventListener('click', () => {
+            if (typeof pid === 'number') selectPalace(pid);
+            else selectMuseum(pid);
+        });
+        list.appendChild(stopEl);
+    });
+
+    openMobileSidebar();
+}
+
+/* ── 지하철 정보 표시 ── */
+function showSubwayInfo(id) {
+    const el = document.getElementById('subway-info');
+    if (!el) return;
+    const info = SUBWAY_INFO[id];
+    if (!info) {
+        el.classList.add('hidden');
+        el.innerHTML = '';
+        return;
+    }
+
+    const stationName = currentLang === 'ko' ? info.stations[0] : info.stationsEn[0];
+    const walkText    = currentLang === 'ko' ? info.walk : info.walkEn;
+
+    const badgesHtml = info.lines.map((line, i) => {
+        const color = info.colors[i] || info.colors[0];
+        return `<span class="subway-line-badge" style="background:${color}">${line}</span>`;
+    }).join('');
+
+    el.innerHTML = `
+        <span class="subway-icon">🚇</span>
+        ${badgesHtml}
+        <span class="subway-station">${stationName}</span>
+        <span class="subway-walk">· ${walkText}</span>`;
+    el.classList.remove('hidden');
+}
+
+/* ── 언어 전환 ── */
+function toggleLang() {
+    currentLang = currentLang === 'ko' ? 'en' : 'ko';
+    const btn = document.getElementById('lang-toggle');
+    if (btn) btn.textContent = currentLang === 'ko' ? 'EN' : '한';
+
+    const titlePalace = document.getElementById('section-title-palace');
+    const titleMuseum = document.getElementById('section-title-museum');
+    const titleCourse = document.getElementById('section-title-course');
+    if (titlePalace) titlePalace.textContent = currentLang === 'ko' ? '궁궐' : 'Palaces';
+    if (titleMuseum) titleMuseum.textContent = currentLang === 'ko' ? '박물관' : 'Museums';
+    if (titleCourse) titleCourse.textContent = currentLang === 'ko' ? '추천 코스' : 'Courses';
+
+    rebuildPalaceSidebar();
+    buildMuseumSidebar();
+    buildCourseSection();
+
+    if (currentPalace && !document.getElementById('info-panel').classList.contains('hidden')) {
+        showSubwayInfo(currentPalace.id);
+    }
+
+    if (quizPalace && document.getElementById('quiz-panel').classList.contains('open')) {
+        const nameText = currentLang === 'ko' ? quizPalace.name : quizPalace.nameEn;
+        document.getElementById('quiz-palace-name').textContent = nameText;
+    }
+}
+
+/* ── 퀴즈 점수 업데이트 ── */
+function updateScoreDisplay() {
+    const el = document.getElementById('quiz-score-display');
+    if (!el) return;
+    el.textContent = `정답 ${quizScore.correct}/${quizScore.total}`;
+    el.classList.add('visible');
 }
 
 /* ── 궁궐 마커 생성 (글로우 닷) ── */
@@ -238,6 +454,7 @@ function selectPalace(palaceId) {
 
     closeQuiz();
     closeDetail();
+    showSubwayInfo(palace.id);
     loadPalaceInfo(palace);
     openMobileSidebar();
 }
@@ -259,6 +476,7 @@ function selectMuseum(museumId) {
 
     closeQuiz();
     closeDetail();
+    showSubwayInfo(museum.id);
     loadMuseumInfo(museum);
     openMobileSidebar();
 }
@@ -273,7 +491,7 @@ function loadPalaceInfo(palace) {
     loading.classList.remove('hidden');
     list.innerHTML = '';
 
-    document.getElementById('info-title').textContent   = palace.name;
+    document.getElementById('info-title').textContent   = currentLang === 'ko' ? palace.name : palace.nameEn;
     document.getElementById('info-address').textContent = palace.address;
 
     fetch(`/api/palace/${palace.id}`)
@@ -308,7 +526,7 @@ function loadMuseumInfo(museum) {
     loading.classList.remove('hidden');
     list.innerHTML = '';
 
-    document.getElementById('info-title').textContent   = museum.name;
+    document.getElementById('info-title').textContent   = currentLang === 'ko' ? museum.name : museum.nameEn;
     document.getElementById('info-address').textContent = museum.address;
 
     loading.classList.add('hidden');
@@ -376,7 +594,8 @@ function openQuiz(item, palace) {
     quizItem   = item;
     quizPalace = palace;
 
-    document.getElementById('quiz-palace-name').textContent = palace.name;
+    const palaceDisplayName = currentLang === 'ko' ? palace.name : palace.nameEn;
+    document.getElementById('quiz-palace-name').textContent = palaceDisplayName;
 
     const hero = document.getElementById('quiz-hero');
     hero.innerHTML = '';
@@ -438,6 +657,11 @@ function openQuiz(item, palace) {
 }
 
 function handleAnswer(isCorrect, selected, correct) {
+    /* 점수 업데이트 */
+    quizScore.total++;
+    if (isCorrect) quizScore.correct++;
+    updateScoreDisplay();
+
     document.querySelectorAll('.quiz-choice').forEach(btn => {
         btn.disabled = true;
         const text  = btn.querySelector('.quiz-choice-text')?.textContent;
@@ -494,7 +718,7 @@ function closeQuiz() {
 ══════════════════════════════ */
 
 function openDetail(item, palace) {
-    document.getElementById('detail-palace-name').textContent = palace.name;
+    document.getElementById('detail-palace-name').textContent = currentLang === 'ko' ? palace.name : palace.nameEn;
 
     const hero = document.getElementById('detail-hero');
     hero.innerHTML = '';
@@ -538,6 +762,10 @@ function closeDetail() {
 window.addEventListener('DOMContentLoaded', () => {
     document.getElementById('quiz-back').addEventListener('click', closeQuiz);
     document.getElementById('detail-back').addEventListener('click', closeDetail);
+
+    /* 언어 토글 */
+    const langBtn = document.getElementById('lang-toggle');
+    if (langBtn) langBtn.addEventListener('click', toggleLang);
 
     /* 모바일 사이드바 토글 */
     const toggleBtn = document.getElementById('mobile-sidebar-toggle');

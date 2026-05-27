@@ -740,6 +740,117 @@ html, body {
 .quiz-actions { padding: 0 16px 32px; display: flex; gap: 10px; }
 .quiz-actions.hidden { display: none; }
 
+/* ── 언어 토글 ── */
+.lang-toggle {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: rgba(255,255,255,0.15);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 9999px;
+    padding: 4px 11px;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: background 0.15s;
+    z-index: 1;
+}
+.lang-toggle:hover { background: rgba(255,255,255,0.28); }
+
+/* ── 지하철 정보 ── */
+.subway-info {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-wrap: wrap;
+    margin-top: 7px;
+    font-size: 12px;
+}
+.subway-info.hidden { display: none; }
+.subway-icon { font-size: 13px; }
+.subway-line-badge {
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 9999px;
+    white-space: nowrap;
+}
+.subway-station { font-weight: 700; color: var(--ink); }
+.subway-walk    { color: var(--ink-muted-48); font-size: 11px; }
+
+/* ── 코스 카드 ── */
+.course-nav {
+    padding: 6px 10px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    border-bottom: 1px solid var(--hairline);
+    background: var(--canvas);
+}
+.course-card {
+    display: flex;
+    align-items: stretch;
+    border-radius: 14px;
+    border: 1.5px solid var(--hairline);
+    overflow: hidden;
+    cursor: pointer;
+    transition: box-shadow 0.2s, transform 0.15s, border-color 0.2s;
+    background: var(--canvas);
+}
+.course-card:hover {
+    box-shadow: 0 4px 16px rgba(108,99,255,0.12);
+    transform: translateY(-1px);
+    border-color: rgba(108,99,255,0.2);
+}
+.course-card:active { transform: scale(0.97); }
+.course-card-left {
+    width: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: 8px 4px;
+}
+.course-time {
+    color: rgba(255,255,255,0.92);
+    font-size: 10px;
+    font-weight: 800;
+    text-align: center;
+    line-height: 1.3;
+    letter-spacing: -0.2px;
+}
+.course-card-body { padding: 10px 12px; flex: 1; min-width: 0; }
+.course-card-name { font-size: 13px; font-weight: 800; color: var(--ink); margin-bottom: 2px; }
+.course-card-desc {
+    font-size: 11px;
+    color: var(--ink-muted-48);
+    margin-bottom: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.course-places { display: flex; gap: 4px; align-items: center; }
+.course-place-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+
+/* ── 퀴즈 점수 ── */
+.quiz-score-display {
+    display: none;
+    margin-left: auto;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--primary);
+    background: var(--canvas-parchment);
+    border: 1px solid var(--hairline);
+    border-radius: 9999px;
+    padding: 3px 10px;
+    white-space: nowrap;
+}
+.quiz-score-display.visible { display: block; }
+
 /* ── 모바일 전용 요소 (데스크톱에서 숨김) ── */
 .mobile-sidebar-toggle { display: none; }
 .sidebar-handle        { display: none; }
